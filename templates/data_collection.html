@@ -1,0 +1,410 @@
+{% extends "base.html" %}
+
+{% block title %}Data Collection - DevCareerCompass{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">
+                    <i class="fas fa-database text-primary"></i>
+                    Enhanced Data Collection
+                </h1>
+                <button class="btn btn-outline-secondary" onclick="refreshStatistics()">
+                    <i class="fas fa-sync-alt"></i> Refresh Stats
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Statistics -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-chart-bar text-info"></i>
+                        Current Database Statistics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row" id="statistics-container">
+                        <div class="col-md-2">
+                            <div class="text-center">
+                                <div class="h2 text-primary" id="dev-count">-</div>
+                                <div class="text-muted">Developers</div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="text-center">
+                                <div class="h2 text-success" id="repo-count">-</div>
+                                <div class="text-muted">Repositories</div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="text-center">
+                                <div class="h2 text-warning" id="skill-count">-</div>
+                                <div class="text-muted">Skills</div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="text-center">
+                                <div class="h2 text-info" id="commit-count">-</div>
+                                <div class="text-muted">Commits</div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="text-center">
+                                <div class="h2 text-danger" id="job-count">-</div>
+                                <div class="text-muted">Job Postings</div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="text-center">
+                                <div class="h2 text-secondary" id="total-count">-</div>
+                                <div class="text-muted">Total Items</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Collection Options -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-cloud-download-alt text-success"></i>
+                        Data Collection Sources
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- GitHub -->
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card h-100 border-primary">
+                                <div class="card-body text-center">
+                                    <i class="fab fa-github fa-3x text-primary mb-3"></i>
+                                    <h6 class="card-title">GitHub Developers</h6>
+                                    <p class="card-text small text-muted">
+                                        Collect developers from trending repositories
+                                    </p>
+                                    <button class="btn btn-primary btn-sm" onclick="collectData('github')">
+                                        <i class="fas fa-download"></i> Collect (50)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stack Overflow -->
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card h-100 border-warning">
+                                <div class="card-body text-center">
+                                    <i class="fab fa-stack-overflow fa-3x text-warning mb-3"></i>
+                                    <h6 class="card-title">Stack Overflow</h6>
+                                    <p class="card-text small text-muted">
+                                        Collect active developers from Stack Overflow
+                                    </p>
+                                    <button class="btn btn-warning btn-sm" onclick="collectData('stackoverflow')">
+                                        <i class="fas fa-download"></i> Collect (50)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reddit -->
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card h-100 border-danger">
+                                <div class="card-body text-center">
+                                    <i class="fab fa-reddit fa-3x text-danger mb-3"></i>
+                                    <h6 class="card-title">Reddit Developers</h6>
+                                    <p class="card-text small text-muted">
+                                        Collect developers from programming communities
+                                    </p>
+                                    <button class="btn btn-danger btn-sm" onclick="collectData('reddit')">
+                                        <i class="fas fa-download"></i> Collect (50)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- LinkedIn Jobs -->
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card h-100 border-info">
+                                <div class="card-body text-center">
+                                    <i class="fab fa-linkedin fa-3x text-info mb-3"></i>
+                                    <h6 class="card-title">LinkedIn Jobs</h6>
+                                    <p class="card-text small text-muted">
+                                        Collect job postings from LinkedIn
+                                    </p>
+                                    <button class="btn btn-info btn-sm" onclick="collectData('linkedin')">
+                                        <i class="fas fa-download"></i> Collect (25)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Indeed Jobs -->
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card h-100 border-success">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-briefcase fa-3x text-success mb-3"></i>
+                                    <h6 class="card-title">Indeed Jobs</h6>
+                                    <p class="card-text small text-muted">
+                                        Collect job listings from Indeed
+                                    </p>
+                                    <button class="btn btn-success btn-sm" onclick="collectData('indeed')">
+                                        <i class="fas fa-download"></i> Collect (25)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Statistics -->
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card h-100 border-secondary">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-chart-bar fa-3x text-secondary mb-3"></i>
+                                    <h6 class="card-title">View Statistics</h6>
+                                    <p class="card-text small text-muted">
+                                        Check current data collection status
+                                    </p>
+                                    <button class="btn btn-secondary btn-sm" onclick="refreshStatistics()">
+                                        <i class="fas fa-sync-alt"></i> Refresh Stats
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Developers and Skills -->
+    <div class="row">
+        <!-- Top Developers -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-trophy text-warning"></i>
+                        Top Developers
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="top-developers-container">
+                        <div class="text-center text-muted">
+                            <i class="fas fa-spinner fa-spin"></i> Loading...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Skills -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-code text-success"></i>
+                        Top Skills
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="top-skills-container">
+                        <div class="text-center text-muted">
+                            <i class="fas fa-spinner fa-spin"></i> Loading...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h5 id="loading-title">Collecting Data...</h5>
+                <p id="loading-message" class="text-muted">Please wait while we collect data from the selected source.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let loadingModal;
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+    loadStatistics();
+});
+
+function loadStatistics() {
+    fetch('/api/statistics')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Statistics data received:', data);
+            if (data.success) {
+                updateStatistics(data.statistics);
+                updateTopDevelopers(data.top_developers);
+                updateTopSkills(data.top_skills);
+            } else {
+                showNotification('Error loading statistics: ' + data.error, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Failed to load statistics', 'error');
+        });
+}
+
+function updateStatistics(stats) {
+    try {
+        console.log('Updating statistics with:', stats);
+        document.getElementById('dev-count').textContent = (stats.developers?.total || 0).toLocaleString();
+        document.getElementById('repo-count').textContent = (stats.repositories || 0).toLocaleString();
+        document.getElementById('skill-count').textContent = (stats.skills || 0).toLocaleString();
+        document.getElementById('commit-count').textContent = (stats.commits || 0).toLocaleString();
+        document.getElementById('job-count').textContent = (stats.job_postings?.total || 0).toLocaleString();
+        document.getElementById('total-count').textContent = ((stats.developers?.total || 0) + (stats.repositories || 0) + (stats.skills || 0) + (stats.commits || 0) + (stats.job_postings?.total || 0)).toLocaleString();
+    } catch (error) {
+        console.error('Error updating statistics:', error);
+        console.error('Stats object:', stats);
+    }
+}
+
+function updateTopDevelopers(developers) {
+    const container = document.getElementById('top-developers-container');
+    if (developers.length === 0) {
+        container.innerHTML = '<div class="text-center text-muted">No developers found</div>';
+        return;
+    }
+
+    let html = '';
+    developers.forEach((dev, index) => {
+        html += `
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div>
+                    <span class="badge bg-primary me-2">${index + 1}</span>
+                    <strong>${dev.name || dev.username}</strong>
+                    <small class="text-muted d-block">@${dev.username}</small>
+                </div>
+                <div class="text-end">
+                    <div class="fw-bold">${dev.followers.toLocaleString()}</div>
+                    <small class="text-muted">followers</small>
+                </div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+function updateTopSkills(skills) {
+    const container = document.getElementById('top-skills-container');
+    if (skills.length === 0) {
+        container.innerHTML = '<div class="text-center text-muted">No skills found</div>';
+        return;
+    }
+
+    let html = '';
+    skills.forEach((skill, index) => {
+        html += `
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div>
+                    <span class="badge bg-success me-2">${index + 1}</span>
+                    <strong>${skill.name}</strong>
+                    <small class="text-muted d-block">${skill.category}</small>
+                </div>
+                <div class="text-end">
+                    <div class="fw-bold">${skill.developer_count}</div>
+                    <small class="text-muted">developers</small>
+                </div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+function collectData(type) {
+    const typeNames = {
+        'github': 'GitHub Developers',
+        'stackoverflow': 'Stack Overflow',
+        'reddit': 'Reddit Developers',
+        'linkedin': 'LinkedIn Jobs',
+        'indeed': 'Indeed Jobs'
+    };
+
+    const typeName = typeNames[type] || type;
+    
+    // Show loading modal
+    document.getElementById('loading-title').textContent = `Collecting from ${typeName}`;
+    document.getElementById('loading-message').textContent = 'Please wait while we collect data from the selected source.';
+    loadingModal.show();
+
+    fetch('/api/collect_data', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ type: type })
+    })
+    .then(response => response.json())
+    .then(data => {
+        loadingModal.hide();
+        
+        if (data.success) {
+            showNotification(data.message, 'success');
+            // Refresh statistics after successful collection
+            setTimeout(() => {
+                loadStatistics();
+            }, 1000);
+        } else {
+            showNotification('Collection failed: ' + data.error, 'error');
+        }
+    })
+    .catch(error => {
+        loadingModal.hide();
+        console.error('Error:', error);
+        showNotification('Failed to collect data', 'error');
+    });
+}
+
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
+function refreshStatistics() {
+    loadStatistics();
+    showNotification('Statistics refreshed', 'info');
+}
+</script>
+{% endblock %} 

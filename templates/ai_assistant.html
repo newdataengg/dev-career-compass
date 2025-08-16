@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block title %}AI Assistant - DevCareerCompass{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Hero Section -->
+    <div class="text-center py-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl text-white">
+        <h1 class="text-4xl font-bold mb-4">AI Career Assistant</h1>
+        <p class="text-xl mb-8">Get personalized career advice powered by AI and real-time data</p>
+    </div>
+
+    <!-- Chat Interface -->
+    <div class="bg-white rounded-lg shadow-md">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-xl font-bold text-gray-800">
+                <i class="fas fa-robot text-purple-500 mr-2"></i>
+                Chat with AI Assistant
+            </h2>
+            <p class="text-sm text-gray-600 mt-1">Ask about career paths, skills, job market trends, or get personalized recommendations</p>
+        </div>
+        
+        <div class="p-6">
+            <!-- Chat Messages -->
+            <div id="chat-messages" class="space-y-4 mb-6 h-96 overflow-y-auto">
+                <!-- Welcome Message -->
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-purple-600 text-sm"></i>
+                    </div>
+                    <div class="bg-purple-50 rounded-lg p-4 max-w-4xl">
+                        <p class="text-gray-800">
+                            <strong>AI Assistant:</strong> Hello! I'm your AI career assistant, powered by real-time data from GitHub, Reddit, Stack Overflow, and job market sources. I can help you with:
+                        </p>
+                        <ul class="text-sm text-gray-700 mt-2 space-y-1">
+                            <li>• <strong>Career Paths:</strong> "What career path should I pursue?"</li>
+                            <li>• <strong>Skills:</strong> "What skills are in high demand?"</li>
+                            <li>• <strong>Job Market:</strong> "What are the latest job market trends?"</li>
+                            <li>• <strong>Salary:</strong> "What's the salary range for AI engineers?"</li>
+                            <li>• <strong>Learning:</strong> "How should I learn machine learning?"</li>
+                        </ul>
+                        <p class="text-sm text-gray-600 mt-2">Ask me anything about your career development!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Form -->
+            <form id="chat-form" class="flex space-x-3">
+                <input type="text" id="message-input" 
+                       class="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                       placeholder="Ask about career paths, skills, job market trends...">
+                <button type="submit" 
+                        class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center">
+                    <i class="fas fa-paper-plane mr-2"></i>
+                    Send
+                </button>
+            </form>
+
+            <!-- Quick Questions -->
+            <div class="mt-6">
+                <p class="text-sm font-medium text-gray-700 mb-3">Quick Questions:</p>
+                <div class="flex flex-wrap gap-2">
+                    <button class="quick-question bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-gray-200 transition-colors">
+                        What skills should I learn?
+                    </button>
+                    <button class="quick-question bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-gray-200 transition-colors">
+                        AI career paths
+                    </button>
+                    <button class="quick-question bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-gray-200 transition-colors">
+                        Job market trends
+                    </button>
+                    <button class="quick-question bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-gray-200 transition-colors">
+                        Salary insights
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-database text-blue-600 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Real-Time Data</h3>
+            <p class="text-sm text-gray-600">Powered by live data from GitHub, Reddit, Stack Overflow, and job markets</p>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-brain text-green-600 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">AI-Powered</h3>
+            <p class="text-sm text-gray-600">Advanced AI with RAG technology for contextual and relevant responses</p>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-chart-line text-purple-600 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Market Insights</h3>
+            <p class="text-sm text-gray-600">Get insights into current market trends and opportunities</p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chatForm = document.getElementById('chat-form');
+    const messageInput = document.getElementById('message-input');
+    const chatMessages = document.getElementById('chat-messages');
+    const quickQuestions = document.querySelectorAll('.quick-question');
+
+    // Handle form submission
+    chatForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const message = messageInput.value.trim();
+        if (message) {
+            sendMessage(message);
+            messageInput.value = '';
+        }
+    });
+
+    // Handle quick questions
+    quickQuestions.forEach(button => {
+        button.addEventListener('click', function() {
+            const question = this.textContent;
+            sendMessage(question);
+        });
+    });
+
+    function sendMessage(message) {
+        // Add user message
+        addMessage(message, 'user');
+        
+        // Show loading indicator
+        const loadingId = addLoadingMessage();
+        
+        // Send to backend
+        fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: message })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Remove loading message
+            removeLoadingMessage(loadingId);
+            
+            // Add AI response
+            if (data.success) {
+                addMessage(data.response, 'ai', data.confidence);
+            } else {
+                addMessage('Sorry, I encountered an error. Please try again.', 'ai');
+            }
+        })
+        .catch(error => {
+            removeLoadingMessage(loadingId);
+            addMessage('Sorry, I encountered an error. Please try again.', 'ai');
+        });
+    }
+
+    function addMessage(message, sender, confidence = null) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'flex items-start space-x-3';
+        
+        if (sender === 'user') {
+            messageDiv.innerHTML = `
+                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-user text-blue-600 text-sm"></i>
+                </div>
+                <div class="bg-blue-50 rounded-lg p-4 max-w-4xl">
+                    <p class="text-gray-800 whitespace-pre-wrap">${message}</p>
+                </div>
+            `;
+        } else {
+            let confidenceHtml = '';
+            if (confidence !== null) {
+                confidenceHtml = `<div class="text-xs text-gray-500 mt-2">Confidence: ${Math.round(confidence * 100)}%</div>`;
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-robot text-purple-600 text-sm"></i>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-4 max-w-4xl">
+                    <div class="prose prose-sm max-w-none leading-relaxed chat-message-content">${formatBotResponse(message)}</div>
+                    ${confidenceHtml}
+                </div>
+            `;
+        }
+        
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function addLoadingMessage() {
+        const loadingId = 'loading-' + Date.now();
+        const loadingDiv = document.createElement('div');
+        loadingDiv.id = loadingId;
+        loadingDiv.className = 'flex items-start space-x-3';
+        loadingDiv.innerHTML = `
+            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-robot text-purple-600 text-sm"></i>
+            </div>
+            <div class="bg-purple-50 rounded-lg p-4">
+                <div class="flex items-center space-x-2">
+                    <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-600"></div>
+                    <span class="text-gray-600">AI is thinking...</span>
+                </div>
+            </div>
+        `;
+        chatMessages.appendChild(loadingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        return loadingId;
+    }
+
+    function removeLoadingMessage(loadingId) {
+        const loadingElement = document.getElementById(loadingId);
+        if (loadingElement) {
+            loadingElement.remove();
+        }
+    }
+
+    function formatBotResponse(text) {
+        // Convert markdown-like formatting to HTML
+        return text
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/## (.*?)(?:\n|$)/g, '<h3 class="text-lg font-semibold mt-3 mb-2">$1</h3>')
+            .replace(/### (.*?)(?:\n|$)/g, '<h4 class="text-base font-semibold mt-2 mb-1">$1</h4>')
+            .replace(/^\d+\. (.*?)(?:\n|$)/gm, '<div class="flex items-start"><span class="min-w-[1.5rem] flex-shrink-0">$&</span><span class="flex-1">$1</span></div>')
+            .replace(/^• (.*?)(?:\n|$)/gm, '<div class="flex items-start"><span class="min-w-[1rem] flex-shrink-0">•</span><span class="flex-1">$1</span></div>')
+            .replace(/\n/g, '<br>');
+    }
+});
+</script>
+
+<style>
+.chat-message-content {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.prose h3 {
+    line-height: 1.4;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.prose h4 {
+    line-height: 1.4;
+    margin-top: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.prose strong {
+    font-weight: 600;
+}
+
+.prose em {
+    font-style: italic;
+}
+</style>
+{% endblock %} 

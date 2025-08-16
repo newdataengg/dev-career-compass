@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Results - DevCareerCompass{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h2 mb-0">
+                <i class="fas fa-chart-line"></i> Analysis Results
+            </h1>
+            <p class="text-muted">Career insights for @{{ username }}</p>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3">Analyzing developer profile...</p>
+    </div>
+
+    <!-- Results Content -->
+    <div id="resultsContent" style="display: none;">
+        <!-- Developer Info -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-2 text-center">
+                                <i class="fas fa-user-circle fa-4x text-primary"></i>
+                            </div>
+                            <div class="col-md-10">
+                                <h3 id="developerName">Loading...</h3>
+                                <p class="text-muted mb-2" id="developerUsername">@{{ username }}</p>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <strong>Location:</strong> <span id="developerLocation">-</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <strong>Company:</strong> <span id="developerCompany">-</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <strong>Followers:</strong> <span id="developerFollowers">-</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <strong>Repositories:</strong> <span id="developerRepos">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Results -->
+        <div class="row g-4">
+            <!-- Career Prediction -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-transparent">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-line"></i> Career Prediction
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <h4 id="predictedRole" class="text-primary">-</h4>
+                            <span id="confidenceBadge" class="badge bg-success">-</span>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <p><strong>Timeline:</strong> <span id="timeline">-</span></p>
+                                <p><strong>Market Demand:</strong> <span id="marketDemand">-</span></p>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>Salary Range:</strong> <span id="salaryRange">-</span></p>
+                                <p><strong>Growth Potential:</strong> <span id="growthPotential">-</span></p>
+                            </div>
+                        </div>
+                        <hr>
+                        <h6>Required Skills:</h6>
+                        <div id="requiredSkills" class="d-flex flex-wrap gap-1">
+                            <!-- Skills will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deep Learning Insights -->
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-transparent">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-brain"></i> Deep Learning Analysis
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h6>Career Path Prediction:</h6>
+                            <p id="deepCareerRole" class="mb-1">-</p>
+                            <span id="deepConfidenceBadge" class="badge bg-info">-</span>
+                        </div>
+                        <div class="mb-3">
+                            <h6>Salary Prediction:</h6>
+                            <p id="deepSalaryRange" class="mb-1">-</p>
+                            <span id="deepSalaryConfidence" class="badge bg-warning">-</span>
+                        </div>
+                        <hr>
+                        <h6>Feature Importance:</h6>
+                        <div id="featureImportance">
+                            <!-- Feature importance will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visualizations -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-transparent">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-pie"></i> Advanced Visualizations
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>3D Career Space</h6>
+                                <div class="bg-light rounded p-3 text-center">
+                                    <i class="fas fa-cube fa-2x text-muted"></i>
+                                    <p class="mt-2 text-muted">Interactive 3D visualization of career trajectory</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Skill Network</h6>
+                                <div class="bg-light rounded p-3 text-center">
+                                    <i class="fas fa-network-wired fa-2x text-muted"></i>
+                                    <p class="mt-2 text-muted">Skill relationships and connections</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <a href="{{ url_for('analyze') }}" class="btn btn-primary me-2">
+                    <i class="fas fa-search"></i> Analyze Another Developer
+                </a>
+                <a href="{{ url_for('chatbot') }}" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-robot"></i> Ask AI Assistant
+                </a>
+                <button class="btn btn-outline-secondary" onclick="window.print()">
+                    <i class="fas fa-print"></i> Print Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" style="display: none;" class="text-center py-5">
+        <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+        <h4>Analysis Failed</h4>
+        <p class="text-muted" id="errorMessage">An error occurred while analyzing the developer profile.</p>
+        <a href="{{ url_for('analyze') }}" class="btn btn-primary">
+            <i class="fas fa-arrow-left"></i> Try Again
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const username = '{{ username }}';
+    loadAnalysisResults(username);
+});
+
+function loadAnalysisResults(username) {
+    // Show loading state
+    document.getElementById('loadingState').style.display = 'block';
+    document.getElementById('resultsContent').style.display = 'none';
+    document.getElementById('errorState').style.display = 'none';
+
+    // Make API call
+    fetch('/api/analyze_developer', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ github_username: username })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('loadingState').style.display = 'none';
+        
+        if (data.success) {
+            displayResults(data);
+        } else {
+            showError(data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showError('Failed to load analysis results. Please try again.');
+    });
+}
+
+function displayResults(data) {
+    // Update developer info
+    document.getElementById('developerName').textContent = data.developer.name || data.developer.username;
+    document.getElementById('developerLocation').textContent = data.developer.location || 'Unknown';
+    document.getElementById('developerCompany').textContent = data.developer.company || 'Unknown';
+    document.getElementById('developerFollowers').textContent = data.developer.followers.toLocaleString();
+    document.getElementById('developerRepos').textContent = data.developer.public_repos;
+
+    // Update career prediction
+    document.getElementById('predictedRole').textContent = data.analysis.career_prediction.predicted_role;
+    document.getElementById('confidenceBadge').textContent = `${(data.analysis.career_prediction.confidence * 100).toFixed(1)}% Confidence`;
+    document.getElementById('timeline').textContent = `${data.analysis.career_prediction.timeline_months} months`;
+    document.getElementById('marketDemand').textContent = data.analysis.career_prediction.market_demand;
+    document.getElementById('salaryRange').textContent = data.analysis.career_prediction.salary_range;
+    document.getElementById('growthPotential').textContent = 'High';
+
+    // Update required skills
+    const skillsContainer = document.getElementById('requiredSkills');
+    skillsContainer.innerHTML = '';
+    data.analysis.career_prediction.required_skills.forEach(skill => {
+        const badge = document.createElement('span');
+        badge.className = 'badge bg-light text-dark';
+        badge.textContent = skill;
+        skillsContainer.appendChild(badge);
+    });
+
+    // Update deep learning insights
+    document.getElementById('deepCareerRole').textContent = data.analysis.deep_learning.career_prediction.predicted_role;
+    document.getElementById('deepConfidenceBadge').textContent = `${(data.analysis.deep_learning.career_prediction.confidence * 100).toFixed(1)}% Confidence`;
+    document.getElementById('deepSalaryRange').textContent = data.analysis.deep_learning.salary_prediction.salary_range;
+    document.getElementById('deepSalaryConfidence').textContent = `${(data.analysis.deep_learning.salary_prediction.confidence * 100).toFixed(1)}% Confidence`;
+
+    // Update feature importance
+    const featureContainer = document.getElementById('featureImportance');
+    featureContainer.innerHTML = '';
+    const features = data.analysis.deep_learning.career_prediction.feature_importance;
+    Object.entries(features).forEach(([feature, importance]) => {
+        const div = document.createElement('div');
+        div.className = 'mb-2';
+        div.innerHTML = `
+            <div class="d-flex justify-content-between">
+                <span>${feature.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>
+                <span class="text-muted">${(importance * 100).toFixed(1)}%</span>
+            </div>
+            <div class="progress" style="height: 6px;">
+                <div class="progress-bar" style="width: ${importance * 100}%"></div>
+            </div>
+        `;
+        featureContainer.appendChild(div);
+    });
+
+    // Show results
+    document.getElementById('resultsContent').style.display = 'block';
+}
+
+function showError(message) {
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('resultsContent').style.display = 'none';
+    document.getElementById('errorState').style.display = 'block';
+    document.getElementById('errorMessage').textContent = message;
+}
+</script>
+{% endblock %} 

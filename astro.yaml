@@ -1,0 +1,30 @@
+# Astro project configuration
+project:
+  name: devcareer-compass
+
+# Airflow configuration
+airflow:
+  version: 2.8.1
+  image: apache/airflow:2.8.1-python3.11
+
+# Environment variables
+env:
+  - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+  - AIRFLOW__CORE__SQL_ALCHEMY_CONN=sqlite:///devcareer_compass.db
+  - AIRFLOW__CORE__FERNET_KEY=2C7F8ubUwG56MJlDPo3NXEDyjaLNNmW0AJCXtjz8wAY=
+  - AIRFLOW__WEBSERVER__SECRET_KEY=devcareer-compass-secret-key-2024
+  - AIRFLOW__CORE__LOAD_EXAMPLES=False
+  - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=True
+
+# Volumes for persistent data
+volumes:
+  - ./devcareer_compass.db:/opt/airflow/devcareer_compass.db
+  - ./.env:/opt/airflow/.env
+
+# Ports
+ports:
+  - 8080:8080
+
+# Dependencies
+dependencies:
+  - requirements.txt 
