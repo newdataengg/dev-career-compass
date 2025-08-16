@@ -109,20 +109,6 @@ static/                        # Static assets
 - **`CONTRIBUTING.md`**: Contribution guidelines
 - **`DOCUMENTATION.md`**: Technical documentation
 
-## 🧹 Cleanup Summary
-
-### Removed Files:
-- ❌ `__pycache__/` directories
-- ❌ `logs/`, `plugins/`, `include/` (empty directories)
-- ❌ `requirements-airflow.txt` (replaced by `requirements.txt`)
-- ❌ `run_airflow.sh` (replaced by `run_astro.sh`)
-- ❌ `Dockerfile.airflow` (using Astro CLI instead)
-- ❌ `docker-compose.airflow.yml` (using Astro CLI instead)
-- ❌ `airflow_settings.yaml` (configured in `astro.yaml`)
-- ❌ `packages.txt` (empty file)
-- ❌ `main.py` (functionality moved to `app.py`)
-- ❌ `cookies.txt` (temporary file)
-- ❌ `volumes/` (managed by Astro CLI)
 
 ### Updated Files:
 - ✅ `.gitignore`: Comprehensive ignore patterns
