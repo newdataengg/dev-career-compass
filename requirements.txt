@@ -6,6 +6,9 @@ pydantic-settings>=2.0.0
 sqlalchemy>=1.4.28,<2.0
 alembic>=1.11.0
 
+# Database
+psycopg2-binary>=2.9.0
+
 # Web Framework
 Flask>=2.3.0
 Flask-SQLAlchemy>=3.0.0
