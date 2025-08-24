@@ -240,7 +240,7 @@ class DataCollector:
         return developers
     
     def collect_market_data(self) -> Dict[str, Any]:
-        """Collect comprehensive job market data from multiple sources"""
+        """Collect comprehensive job market data from multiple sources and store in database"""
         logger.info("Collecting comprehensive job market data...")
         
         try:
@@ -251,7 +251,8 @@ class DataCollector:
                 'technologies': {},
                 'overall_trends': {},
                 'collection_time': datetime.now().isoformat(),
-                'sources': ['github_jobs', 'stack_overflow_jobs', 'indeed_jobs']
+                'sources': ['github_jobs', 'stack_overflow_jobs', 'indeed_jobs'],
+                'jobs_stored': 0
             }
             
             # Get trends for each technology
@@ -262,23 +263,28 @@ class DataCollector:
             python_market_data = self.job_market_aggregator.get_comprehensive_market_data('python')
             market_data['python_detailed'] = python_market_data
             
+            # Store job postings in database
+            jobs_stored = self._store_job_postings_in_database(python_market_data)
+            market_data['jobs_stored'] = jobs_stored
+            
             # Overall market insights
             market_data['overall_trends'] = {
                 'total_jobs_analyzed': sum(trend['total_jobs'] for trend in technology_trends.values()),
-                'most_demanded_tech': max(technology_trends.items(), key=lambda x: x[1]['total_jobs'])[0],
+                'most_demanded_tech': max(technology_trends.items(), key=lambda x: x[1]['total_jobs'])[0] if technology_trends else 'python',
                 'average_salary_range': '60k-120k',
                 'remote_work_prevalence': 'High',
                 'top_locations': ['San Francisco', 'New York', 'London', 'Remote', 'Seattle']
             }
             
-            logger.info(f"Successfully collected comprehensive market data")
+            logger.info(f"Successfully collected comprehensive market data and stored {jobs_stored} jobs")
             return market_data
             
         except Exception as e:
             logger.error(f"Error collecting market data: {e}")
             return {
                 'error': str(e),
-                'collection_time': datetime.now().isoformat()
+                'collection_time': datetime.now().isoformat(),
+                'jobs_stored': 0
             }
     
     def bulk_collect_developers(self, max_developers: int = 100) -> List[Developer]:
@@ -338,6 +344,70 @@ class DataCollector:
                 
         except Exception as e:
             logger.error(f"Error in repository collection: {e}")
+    
+    def _store_job_postings_in_database(self, market_data: Dict[str, Any]) -> int:
+        """Store job postings from market data in the database"""
+        jobs_stored = 0
+        
+        try:
+            with db_manager.get_session() as session:
+                # Extract jobs from aggregated trends
+                jobs = market_data.get('aggregated_trends', [])
+                
+                for job_data in jobs:
+                    try:
+                        # Check if job already exists
+                        existing_job = session.query(JobPosting).filter(
+                            JobPosting.source_id == job_data.get('id'),
+                            JobPosting.data_source == 'market_aggregator'
+                        ).first()
+                        
+                        if existing_job:
+                            continue
+                        
+                        # Create new job posting
+                        job_posting = JobPosting(
+                            title=job_data.get('title', ''),
+                            company=job_data.get('company', ''),
+                            location=job_data.get('location', ''),
+                            description=job_data.get('description', ''),
+                            salary_min=job_data.get('salary_min'),
+                            salary_max=job_data.get('salary_max'),
+                            salary_currency='USD',
+                            job_type=job_data.get('type', 'full-time'),
+                            experience_level=self._determine_experience_level(job_data.get('title', '')),
+                            remote_option='remote' in job_data.get('location', '').lower(),
+                            posted_date=datetime.fromisoformat(job_data.get('created_at', datetime.now().isoformat())),
+                            application_url=job_data.get('url', ''),
+                            data_source='market_aggregator',
+                            source_id=job_data.get('id', '')
+                        )
+                        
+                        session.add(job_posting)
+                        jobs_stored += 1
+                        
+                    except Exception as e:
+                        logger.error(f"Error storing job posting: {e}")
+                        continue
+                
+                session.commit()
+                logger.info(f"Stored {jobs_stored} new job postings in database")
+                
+        except Exception as e:
+            logger.error(f"Error in job posting storage: {e}")
+        
+        return jobs_stored
+    
+    def _determine_experience_level(self, title: str) -> str:
+        """Determine experience level from job title"""
+        title_lower = title.lower()
+        
+        if any(word in title_lower for word in ['senior', 'lead', 'principal', 'staff']):
+            return 'senior'
+        elif any(word in title_lower for word in ['junior', 'entry', 'associate']):
+            return 'entry'
+        else:
+            return 'mid'
     
     def collect_commits_for_repositories(self, max_repositories: int = 50):
         """Collect commits for repositories that don't have commits"""
