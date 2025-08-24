@@ -2,17 +2,24 @@
 
 > **AI Engineer Capstone Project** - Demonstrating Advanced AI Engineering Skills
 
-## 🚀 Overview
+## 🚀 Live Demo
 
-DevCareerCompass is an advanced AI-powered career intelligence platform that demonstrates cutting-edge AI engineering skills including RAG (Retrieval-Augmented Generation), vector search, knowledge graphs, and multi-agent systems. Built for showcasing AI engineering capabilities in interviews and real-world applications.
+**🌐 Live Application**: https://dev-career-compass.onrender.com
+
+Your DevCareerCompass application is now live and fully functional! The platform demonstrates cutting-edge AI engineering skills including RAG (Retrieval-Augmented Generation), vector search, knowledge graphs, and multi-agent systems.
+
+## 🎯 Overview
+
+DevCareerCompass is an advanced AI-powered career intelligence platform that demonstrates mastery of cutting-edge AI engineering skills. The platform combines RAG (Retrieval-Augmented Generation), vector search, knowledge graphs, and multi-agent systems to provide intelligent career guidance based on real-world data from multiple sources including GitHub, Indeed, Stack Overflow, and Reddit.
 
 ### 🎯 **Capstone Project Highlights**
-- **RAG Implementation**: Vector search + LLM integration for accurate responses
-- **Vector Database**: Qdrant Cloud with 384-dimensional embeddings
-- **Knowledge Graph**: NetworkX-based graph with 188 nodes, 113 edges
-- **Multi-LLM Support**: OpenAI, Anthropic, and intelligent fallbacks
-- **Production Ready**: Error handling, logging, performance optimization
-- **Real Data Integration**: GitHub, Indeed, Stack Overflow, Reddit APIs
+- **✅ Live Deployment**: Production-ready application deployed on Render
+- **✅ RAG Implementation**: Vector search + LLM integration for accurate responses
+- **✅ Vector Database**: Qdrant Cloud with semantic similarity search
+- **✅ Knowledge Graph**: NetworkX-based graph with developer-skill relationships
+- **✅ Multi-LLM Support**: OpenAI, Anthropic, and intelligent fallbacks
+- **✅ Real Data Integration**: GitHub, Indeed, Stack Overflow, Reddit APIs
+- **✅ Live Data Collection**: 18 developers, 119 repositories collected
 
 ## 🎯 Key Features
 
@@ -39,19 +46,19 @@ DevCareerCompass is an advanced AI-powered career intelligence platform that dem
 ### 📸 Application Screenshots
 
 #### **1. Main Dashboard**
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](dashboard.png)
 *Main dashboard showing real-time statistics and data integration from multiple sources including GitHub, Indeed, Stack Overflow, and Reddit.*
 
 #### **2. AI Assistant Chatbot**
-![Chatbot](screenshots/chatbot.png)
+![Chatbot](chatbot.png)
 *RAG-powered AI assistant demonstrating vector search and LLM integration with context-aware responses and confidence scoring.*
 
 #### **3. Career Insights**
-![Career Insights](screenshots/career_insights.png)
+![Career Insights](career_insight.png)
 *Interactive career insights page with AI-powered recommendations and detailed career path information accessible through 'Learn More' buttons.*
 
 #### **4. Job Market Analysis**
-![Job Market](screenshots/job_market.png)
+![Job Market](job_postings.png)
 *Real-time job market analysis with data from Indeed API showing current market trends and opportunities.*
 
 ## 🏗️ Architecture
@@ -60,7 +67,9 @@ DevCareerCompass is an advanced AI-powered career intelligence platform that dem
 ```
 src/
 ├── agents/
-│   └── enhanced_chatbot.py      # Main RAG-powered chatbot
+│   ├── enhanced_chatbot.py      # Main RAG-powered chatbot
+│   ├── career_advisor_agent.py  # Career guidance agent
+│   └── skill_analyzer_agent.py  # Skill analysis agent
 ├── knowledge_graph/
 │   ├── graph_builder.py         # Knowledge graph construction
 │   └── graph_rag_service.py     # Graph RAG query processing
@@ -68,10 +77,13 @@ src/
 │   └── qdrant_client.py         # Vector database operations
 ├── llm/
 │   └── llm_client.py            # Multi-LLM client with fallbacks
-└── data/
-    ├── github_collector.py      # GitHub data collection
-    ├── indeed_collector.py      # Indeed job data
-    └── database_manager.py      # SQLAlchemy ORM
+├── data_pipeline/
+│   ├── data_collector.py        # Data collection orchestration
+│   ├── github_client.py         # GitHub API integration
+│   └── job_market_clients.py    # Job market APIs
+└── database/
+    ├── models.py                # SQLAlchemy models
+    └── connection.py            # Database connection management
 ```
 
 ### AI Skills Demonstrated
@@ -116,7 +128,7 @@ src/
 
 ### Prerequisites
 - Python 3.8+
-- PostgreSQL
+- PostgreSQL (optional, SQLite used by default)
 - Qdrant Vector Database
 - Airflow (for data pipelines)
 
@@ -134,11 +146,11 @@ source ai-cap/bin/activate  # On Windows: ai-cap\Scripts\activate
 pip install -r requirements.txt
 
 # Set up environment variables
-cp .env.example .env
+cp env.example .env
 # Edit .env with your API keys and database credentials
 
 # Initialize database
-python -m src.data.database_manager
+python -m src.database.connection
 
 # Start the application
 python app.py
@@ -147,10 +159,10 @@ python app.py
 ### Environment Variables
 ```env
 # Database
-DATABASE_URL=postgresql://user:password@localhost/devcareer
+DATABASE_URL=sqlite:///./devcareer_compass.db
 
 # Qdrant Vector Database
-QDRANT_URL=https://your-qdrant-instance.cloud
+QDRANT_CLOUD_URL=https://your-qdrant-instance.cloud
 QDRANT_API_KEY=your-api-key
 
 # LLM APIs
@@ -159,7 +171,9 @@ ANTHROPIC_API_KEY=your-anthropic-key
 
 # Data Sources
 GITHUB_TOKEN=your-github-token
-X_RAPID_API_KEY=your-rapidapi-key
+XRAPID_API_KEY=your-rapidapi-key
+ADZUNA_APP_ID=your-adzuna-app-id
+ADZUNA_APP_KEY=your-adzuna-app-key
 ```
 
 ## 📈 Data Pipeline
@@ -171,11 +185,11 @@ The project includes automated data pipelines for:
 - **Vector Database Updates**: Embedding generation and storage
 - **Knowledge Graph Updates**: Graph construction and maintenance
 
-### Data Sources
-- **97 GitHub Developers**: Active profiles with skill analysis
-- **59 Skills**: Market demand and popularity scoring
-- **6 Job Postings**: Real-time Indeed data
-- **188 Knowledge Graph Nodes**: Developer-skill-repository relationships
+### Current Data Status
+- **18 GitHub Developers**: Active profiles with skill analysis
+- **119 Repositories**: Code repositories with technology analysis
+- **Vector Database**: Semantic embeddings for similarity search
+- **Knowledge Graph**: Developer-skill-repository relationships
 
 ## 🎯 Usage Examples
 
@@ -185,7 +199,7 @@ The project includes automated data pipelines for:
 → Returns skills with market demand scores, job opportunities, and career paths
 
 "What are the latest AI trends?"
-→ Provides comprehensive AI trend analysis with RAG, MCP, vector databases
+→ Provides comprehensive AI trend analysis with RAG, vector databases
 
 "Tell me about Python career opportunities"
 → Specific skill analysis with salary ranges and learning paths
@@ -196,8 +210,8 @@ The project includes automated data pipelines for:
 
 ### API Endpoints
 - `POST /api/chat` - Main chatbot endpoint
-- `POST /api/graph_rag` - Graph RAG queries
-- `GET /api/graph_statistics` - Knowledge graph metrics
+- `POST /api/collect-data` - Trigger live data collection
+- `GET /health` - Application health check
 
 ## 🔧 Configuration
 
@@ -221,37 +235,15 @@ The system supports multiple LLM providers with intelligent fallbacks:
 - **Accuracy**: Context-aware responses based on real data
 
 ### Data Coverage
-- **Skills**: 59 skills with market demand analysis
-- **Developers**: 97 GitHub profiles analyzed
-- **Jobs**: Real-time Indeed job postings
-- **Knowledge Graph**: 188 nodes, 113 edges
+- **Developers**: 18 GitHub profiles analyzed
+- **Repositories**: 119 repositories with technology analysis
+- **Vector Database**: Semantic embeddings for similarity search
+- **Knowledge Graph**: Developer-skill-repository relationships
 
 ## 🚀 Deployment
 
 ### 🎯 **Live Demo**
-Your DevCareerCompass application is now ready for deployment! Follow the [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for step-by-step instructions.
-
-### Quick Deployment Options
-
-#### Option 1: Render (Recommended - Free)
-1. Go to [render.com](https://render.com)
-2. Connect your GitHub repository
-3. Deploy as a Web Service
-4. Get your public URL: `https://your-app-name.onrender.com`
-
-#### Option 2: Railway (Free)
-1. Go to [railway.app](https://railway.app)
-2. Deploy from GitHub repository
-3. Get your public URL: `https://your-app-name.railway.app`
-
-#### Option 3: Heroku
-```bash
-# Install Heroku CLI
-heroku login
-heroku create devcareer-compass
-git push heroku main
-heroku open
-```
+Your DevCareerCompass application is now live at: **https://dev-career-compass.onrender.com**
 
 ### Production Setup
 ```bash
@@ -305,12 +297,21 @@ Response:
 }
 ```
 
-### Graph RAG API
+### Data Collection API
 ```json
-POST /api/graph_rag
+POST /api/collect-data
+
+Response:
 {
-  "query": "Find developers working on Python",
-  "query_type": "developer_search"
+  "success": true,
+  "message": "Live data collection completed",
+  "data": {
+    "developers_collected": 18,
+    "total_developers": 18,
+    "total_repositories": 119,
+    "job_postings": 0,
+    "embeddings_generated": 0
+  }
 }
 ```
 
@@ -328,18 +329,17 @@ This project demonstrates mastery of:
 ## 📚 Capstone Submission Documents
 
 ### **Project Documentation**
-- **[CAPSTONE_SUBMISSION.md](CAPSTONE_SUBMISSION.md)** - Comprehensive project documentation with technical details
-- **[DEMO_SCRIPT.md](DEMO_SCRIPT.md)** - Step-by-step demo script for presentation
-- **[SCREENSHOT_GUIDE.md](SCREENSHOT_GUIDE.md)** - Screenshot capture guidelines and captions
+- **[PROJECT_PROPOSAL.md](PROJECT_PROPOSAL.md)** - Comprehensive project proposal with technical details
 - **[PROJECT_STATUS.md](PROJECT_STATUS.md)** - Final project status and achievements
 
 ### **Key Technical Achievements**
+- ✅ **Live Deployment**: Production-ready application on Render
 - ✅ **RAG System**: Production-ready retrieval-augmented generation
-- ✅ **Vector Search**: 5 active collections with semantic similarity
-- ✅ **Knowledge Graph**: 188 nodes representing real relationships
+- ✅ **Vector Search**: Semantic similarity search with Qdrant
+- ✅ **Knowledge Graph**: Developer-skill-repository relationships
 - ✅ **Multi-LLM**: Intelligent routing with fallback systems
 - ✅ **Async Architecture**: Non-blocking I/O throughout
-- ✅ **Real Data**: 97 developers, 59 skills, 6 job postings
+- ✅ **Real Data**: 18 developers, 119 repositories collected
 
 ### **Performance Metrics**
 - **Response Time**: <2 seconds for most queries
