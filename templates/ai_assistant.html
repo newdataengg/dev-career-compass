@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .replace(/\*(.*?)\*/g, '<em>$1</em>')
             .replace(/## (.*?)(?:\n|$)/g, '<h3 class="text-lg font-semibold mt-3 mb-2">$1</h3>')
             .replace(/### (.*?)(?:\n|$)/g, '<h4 class="text-base font-semibold mt-2 mb-1">$1</h4>')
-            .replace(/^\d+\. (.*?)(?:\n|$)/gm, '<div class="flex items-start"><span class="min-w-[1.5rem] flex-shrink-0">$&</span><span class="flex-1">$1</span></div>')
+            .replace(/^\d+\. (.*?)(?:\n|$)/gm, '<div class="flex items-start"><span class="min-w-[1.5rem] flex-shrink-0">$&</span></div>')
             .replace(/^• (.*?)(?:\n|$)/gm, '<div class="flex items-start"><span class="min-w-[1rem] flex-shrink-0">•</span><span class="flex-1">$1</span></div>')
             .replace(/\n/g, '<br>');
     }
