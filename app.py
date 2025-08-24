@@ -1278,22 +1278,32 @@ def collect_live_data():
         # Initialize data collector
         collector = DataCollector()
         
-        # Collect GitHub data
-        github_data = collector.collect_github_data()
+        # Collect GitHub trending developers
+        github_developers = collector.collect_from_github_trending(max_users=20)
+        
+        # Collect repositories for existing developers
+        collector.collect_repositories_for_existing_developers(max_developers=10)
         
         # Collect job market data
-        job_data = collector.collect_job_market_data()
+        job_data = collector.collect_market_data()
         
         # Generate embeddings
         embedding_count = embedding_generator.generate_all_embeddings()
+        
+        # Get current statistics
+        with db_manager.get_session() as session:
+            total_developers = session.query(Developer).count()
+            total_repositories = session.query(Repository).count()
+            total_jobs = session.query(JobPosting).count()
         
         return jsonify({
             "success": True,
             "message": "Live data collection completed",
             "data": {
-                "github_developers": github_data.get('developers', 0),
-                "github_repositories": github_data.get('repositories', 0),
-                "job_postings": job_data.get('jobs', 0),
+                "developers_collected": len(github_developers),
+                "total_developers": total_developers,
+                "total_repositories": total_repositories,
+                "job_postings": total_jobs,
                 "embeddings_generated": embedding_count
             }
         })
