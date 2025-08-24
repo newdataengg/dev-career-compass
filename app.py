@@ -52,6 +52,16 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+# Initialize rate limiter for abuse protection
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"]
+)
+
 # Global variables for DevCareerCompass components
 devcareer_components = {
     'phase1': None,
@@ -990,6 +1000,7 @@ def api_developers():
 
 
 @app.route('/api/chat', methods=['POST'])
+@limiter.limit("10 per minute")
 def chat():
     """Enhanced chat API endpoint."""
     try:
@@ -1260,6 +1271,47 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+# Data collection endpoint for live data
+@app.route('/api/collect-data', methods=['POST'])
+def collect_live_data():
+    """Trigger live data collection for capstone demonstration."""
+    try:
+        logger.info("Starting live data collection...")
+        
+        # Import data collection modules
+        from src.data_pipeline.data_collector import DataCollector
+        from src.embeddings.embedding_generator import embedding_generator
+        
+        # Initialize data collector
+        collector = DataCollector()
+        
+        # Collect GitHub data
+        github_data = collector.collect_github_data()
+        
+        # Collect job market data
+        job_data = collector.collect_job_market_data()
+        
+        # Generate embeddings
+        embedding_count = embedding_generator.generate_all_embeddings()
+        
+        return jsonify({
+            "success": True,
+            "message": "Live data collection completed",
+            "data": {
+                "github_developers": github_data.get('developers', 0),
+                "github_repositories": github_data.get('repositories', 0),
+                "job_postings": job_data.get('jobs', 0),
+                "embeddings_generated": embedding_count
+            }
+        })
+        
+    except Exception as e:
+        logger.error(f"Error in live data collection: {e}")
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
 
 # Health check endpoint for deployment monitoring
 @app.route('/health')
