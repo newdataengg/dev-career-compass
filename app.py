@@ -52,15 +52,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# Initialize rate limiter for abuse protection
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
-
-limiter = Limiter(
-    app,
-    key_func=get_remote_address,
-    default_limits=["200 per day", "50 per hour"]
-)
+# Rate limiting will be added later after deployment is working
+limiter = None
 
 # Global variables for DevCareerCompass components
 devcareer_components = {
@@ -1000,7 +993,6 @@ def api_developers():
 
 
 @app.route('/api/chat', methods=['POST'])
-@limiter.limit("10 per minute")
 def chat():
     """Enhanced chat API endpoint."""
     try:
