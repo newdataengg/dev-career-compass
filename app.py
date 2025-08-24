@@ -1287,8 +1287,8 @@ def collect_live_data():
         # Collect job market data
         job_data = collector.collect_market_data()
         
-        # Generate embeddings
-        embedding_count = embedding_generator.generate_all_embeddings()
+        # Note: Embeddings will be generated separately
+        embedding_count = 0
         
         # Get current statistics
         with db_manager.get_session() as session:
