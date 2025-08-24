@@ -1261,6 +1261,37 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
+# Health check endpoint for deployment monitoring
+@app.route('/health')
+def health_check():
+    """Health check endpoint for deployment monitoring."""
+    try:
+        # Basic health checks
+        db_status = "healthy"
+        try:
+            # Test database connection
+            db.session.execute('SELECT 1')
+        except Exception as e:
+            db_status = f"error: {str(e)}"
+        
+        return jsonify({
+            "status": "healthy",
+            "timestamp": datetime.utcnow().isoformat(),
+            "version": "1.0.0",
+            "database": db_status,
+            "components": {
+                "chatbot": "available" if devcareer_components.get('chatbot') else "unavailable",
+                "vector_store": "available" if qdrant_client else "unavailable",
+                "knowledge_graph": "available" if knowledge_graph_builder else "unavailable"
+            }
+        })
+    except Exception as e:
+        return jsonify({
+            "status": "unhealthy",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }), 500
+
 # Error handlers
 @app.errorhandler(404)
 def not_found_error(error):
@@ -1285,4 +1316,5 @@ if __name__ == '__main__':
     init_thread.start()
     
     # Run the app
-    app.run(debug=False, host='0.0.0.0', port=3000) 
+    port = int(os.environ.get('PORT', 3000))
+    app.run(debug=False, host='0.0.0.0', port=port) 

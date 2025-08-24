@@ -228,15 +228,40 @@ The system supports multiple LLM providers with intelligent fallbacks:
 
 ## 🚀 Deployment
 
+### 🎯 **Live Demo**
+Your DevCareerCompass application is now ready for deployment! Follow the [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for step-by-step instructions.
+
+### Quick Deployment Options
+
+#### Option 1: Render (Recommended - Free)
+1. Go to [render.com](https://render.com)
+2. Connect your GitHub repository
+3. Deploy as a Web Service
+4. Get your public URL: `https://your-app-name.onrender.com`
+
+#### Option 2: Railway (Free)
+1. Go to [railway.app](https://railway.app)
+2. Deploy from GitHub repository
+3. Get your public URL: `https://your-app-name.railway.app`
+
+#### Option 3: Heroku
+```bash
+# Install Heroku CLI
+heroku login
+heroku create devcareer-compass
+git push heroku main
+heroku open
+```
+
 ### Production Setup
 ```bash
 # Use production WSGI server
 pip install gunicorn
-gunicorn -w 4 -b 0.0.0.0:3000 app:app
+gunicorn -w 4 -b 0.0.0.0:$PORT app:app
 
 # Or with Docker
 docker build -t devcareer-compass .
-docker run -p 3000:3000 devcareer-compass
+docker run -p 8080:8080 devcareer-compass
 ```
 
 ### Environment Configuration
