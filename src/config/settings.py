@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables"""
     
     # GitHub API Configuration
-    github_token: str = Field(..., env="GITHUB_TOKEN")
+    github_token: Optional[str] = Field(None, env="GITHUB_TOKEN")
     github_api_base_url: str = Field("https://api.github.com", env="GITHUB_API_BASE_URL")
     
     # Database Configuration

@@ -19,7 +19,11 @@ class GitHubClient:
     """GitHub API client with rate limiting and error handling"""
     
     def __init__(self):
-        self.github = Github(settings.github_token)
+        if settings.github_token:
+            self.github = Github(settings.github_token)
+        else:
+            self.github = None
+            logger.warning("GitHub token not provided. GitHub API features will be disabled.")
         self.rate_limit_delay = settings.rate_limit_delay
         self._last_request_time = 0
     
@@ -34,6 +38,9 @@ class GitHubClient:
     
     def get_user(self, username: str) -> Optional[GithubUser]:
         """Get GitHub user information"""
+        if not self.github:
+            logger.warning("GitHub API not available. Token not provided.")
+            return None
         try:
             self._rate_limit()
             user = self.github.get_user(username)
@@ -95,6 +102,9 @@ class GitHubClient:
     
     def search_users(self, query: str, max_results: int = 10) -> List[GithubUser]:
         """Search for GitHub users"""
+        if not self.github:
+            logger.warning("GitHub API not available. Token not provided.")
+            return []
         try:
             self._rate_limit()
             users = self.github.search_users(query=query)
