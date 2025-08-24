@@ -201,7 +201,49 @@ class IndeedJobsClient:
         except Exception as e:
             logger.error(f"Error getting company jobs for {company}: {e}")
             return []
+
+
+class AdzunaJobsClient:
+    """Adzuna Jobs API client - Free job data source"""
     
+    def __init__(self):
+        self.base_url = "https://api.adzuna.com/v1"
+        self.app_id = settings.adjuna_app_id
+        self.app_key = settings.adjuna_app_key
+        
+        logger.info("Adzuna Jobs client initialized")
+    
+    def search_jobs(self, query: str = "python developer", location: str = "gb", 
+                   limit: int = 50) -> List[Dict[str, Any]]:
+        """Search for jobs on Adzuna"""
+        try:
+            if not self.app_id or not self.app_key:
+                logger.warning("Adzuna API credentials not configured - skipping collection")
+                return []
+            
+            logger.info(f"Searching Adzuna Jobs for: {query}")
+            
+            params = {
+                'app_id': self.app_id,
+                'app_key': self.app_key,
+                'results_per_page': min(limit, 50),
+                'what': query,
+                'where': location
+            }
+            
+            response = requests.get(f"{self.base_url}/{location}/jobs/search/1", params=params, timeout=60)
+            response.raise_for_status()
+            
+            data = response.json()
+            jobs = data.get('results', [])
+            
+            logger.info(f"Found {len(jobs)} jobs on Adzuna")
+            return jobs[:limit]
+            
+        except Exception as e:
+            logger.error(f"Error searching Adzuna Jobs: {e}")
+            return []
+
 
 class JobMarketDataAggregator:
     """Aggregates job market data from multiple sources"""
@@ -210,6 +252,7 @@ class JobMarketDataAggregator:
         self.github_jobs = GitHubJobsClient()
         self.stack_overflow_jobs = StackOverflowJobsClient()
         self.indeed_jobs = IndeedJobsClient()
+        self.adzuna_jobs = AdzunaJobsClient()
         
         logger.info("Job Market Data Aggregator initialized")
     
@@ -266,6 +309,18 @@ class JobMarketDataAggregator:
         except Exception as e:
             logger.error(f"Indeed Jobs collection failed: {e}")
             market_data['sources']['indeed_jobs'] = {'count': 0, 'error': str(e)}
+        
+        # Collect from Adzuna Jobs
+        try:
+            adzuna_jobs = self.adzuna_jobs.search_jobs(f"{technology} developer", location or "gb", limit=20)
+            market_data['sources']['adzuna_jobs'] = {
+                'count': len(adzuna_jobs),
+                'jobs': adzuna_jobs[:5]
+            }
+            market_data['total_jobs'] += len(adzuna_jobs)
+        except Exception as e:
+            logger.error(f"Adzuna Jobs collection failed: {e}")
+            market_data['sources']['adzuna_jobs'] = {'count': 0, 'error': str(e)}
         
         # Aggregate trends
         all_jobs = []
